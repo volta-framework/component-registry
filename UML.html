@@ -1,0 +1,80 @@
+<!-- (Start HTML Volta\UmlDoc\MermaidDiagram) -->
+<html lang="en">
+  <head>
+    <title>ClassDiagram Volta\Component\Registry\</title>
+    <meta charset="utf-8" />
+    <style>
+        body{
+            margin:20px; color:#cccccc;
+            background: rgb(52,20,20);
+            background: linear-gradient(90deg, rgba(52,20,20,1) 12%, rgba(13,6,6,1) 52%, rgba(52,19,19,1) 90%);
+        }
+    </style>
+  </head>
+  <body>
+    <h1>Volta\Component\Registry\</h1>
+    <p>Generated @ 20230619 13:50:50</p>
+
+<div class="mermaid">
+%%{init: {'theme':'dark'}}%%
+classDiagram
+    class Volta_Component_Registry_Container {
+        #?Volta\Component\Registry\Container _instance$=NULL
+        #array _items=[0..*]
+        +getInstance():Volta\Component\Registry\Container
+        +item(string id, mixed default=NULL):mixed
+        +setInstance(?Volta\Component\Registry\Container container):void
+        +unsetInstance():void
+        +get(string id):mixed
+        +has(string id):bool
+        +offsetExists(mixed offset):bool
+        +offsetGet(mixed offset):mixed
+        +offsetSet(mixed offset, mixed value):void
+        +offsetUnset(mixed offset):void
+        +set(string id, mixed entry):Psr\Container\ContainerInterface
+        +unset(string id):Psr\Container\ContainerInterface
+    }
+    Volta_Component_Registry_Container *-- Volta_Component_Registry_Container : #_instance=NULL
+    Volta_Component_Registry_Container --> Volta_Component_Registry_Container : +getInstance()
+    Volta_Component_Registry_Container ..> Volta_Component_Registry_Container : +setInstance(container)
+    class Psr_Container_ContainerInterface {
+         	&lt;&lt;interface&gt;&gt;
+    }
+    Volta_Component_Registry_Container --> Psr_Container_ContainerInterface : +set()
+    Volta_Component_Registry_Container --> Psr_Container_ContainerInterface : +unset()
+    Psr_Container_ContainerInterface..|>Volta_Component_Registry_Container
+    class ArrayAccess {
+         	&lt;&lt;interface&gt;&gt;
+    }
+    ArrayAccess..|>Volta_Component_Registry_Container
+    class Volta_Component_Registry_Exception
+    Exception<|--Volta_Component_Registry_Exception
+    class Exception
+    class Stringable {
+         	&lt;&lt;interface&gt;&gt;
+    }
+    class Throwable {
+         	&lt;&lt;interface&gt;&gt;
+    }
+    Stringable..|>Throwable
+    Throwable..|>Exception
+    class Psr_Container_ContainerExceptionInterface {
+         	&lt;&lt;interface&gt;&gt;
+    }
+    Throwable..|>Psr_Container_ContainerExceptionInterface
+    Psr_Container_ContainerExceptionInterface..|>Volta_Component_Registry_Exception
+    class Volta_Component_Registry_NotFoundException
+    Exception<|--Volta_Component_Registry_NotFoundException
+    class Psr_Container_NotFoundExceptionInterface {
+         	&lt;&lt;interface&gt;&gt;
+    }
+    Psr_Container_ContainerExceptionInterface..|>Psr_Container_NotFoundExceptionInterface
+    Psr_Container_NotFoundExceptionInterface..|>Volta_Component_Registry_NotFoundException
+</div>
+    <script type="module">
+         import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+         mermaid.initialize({ startOnLoad: true });
+    </script>
+  </body>
+</html>
+<!-- (End HTML Volta\UmlDoc\MermaidDiagram) -->
