@@ -1,6 +1,7 @@
 # Volta\Component\Registry\Container
 
-Dependency manager providing *psr/container-implementation 1.0.0.*
+Dependency injection containers implementation according the PSR-11
 
 See also https://www.php-fig.org/psr/psr-11/
+
 

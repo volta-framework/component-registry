@@ -11,9 +11,12 @@ declare(strict_types=1);
 
 namespace Volta\Component\Registry;
 
-use  Psr\Container\ContainerExceptionInterface;
+use  Psr\Container\NotFoundExceptionInterface;
 
-class Exception extends \Exception implements ContainerExceptionInterface
+/**
+ * As described in the specifications, Exceptions must implement the NotFoundExceptionInterface
+ */
+class NotFoundException extends \Exception implements NotFoundExceptionInterface
 {
 
 }

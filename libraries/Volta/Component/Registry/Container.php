@@ -21,7 +21,13 @@ use Volta\Component\Registry\NotFoundException as NotFoundException;
 use Volta\Component\Registry\Exception as ContainerException;
 
 /**
- * Dependency manager providing *psr/container-implementation 1.0.0.*
+ * Dependency injection container providing *psr/container-implementation 1.0.0.*
+ *
+ * quote:
+ *   The goal set by ContainerInterface is to standardize how frameworks and libraries make use of a
+ *   container to obtain objects and parameters (called entries).
+ *
+ * This class focuses on getting and setting entries and is called the `implementor`
  *
  * @implements ArrayAccess<string, mixed>
  */
@@ -36,6 +42,8 @@ use Volta\Component\Registry\Exception as ContainerException;
      public function __construct()
      {}
 
+    #endregion
+    #region - Singleton:
     /**
      * The singleton instance
      *
@@ -45,7 +53,7 @@ use Volta\Component\Registry\Exception as ContainerException;
     protected static Container|null $_instance = null;
 
     /**
-     * Sets the singletons instance
+     * Sets the singleton instance
      *
      * @param Container|null $container
      * @return void
@@ -78,7 +86,7 @@ use Volta\Component\Registry\Exception as ContainerException;
     }
 
     /**
-     * Unsets the singletons instance
+     * Unsets the singleton instance
      *
      * @return void
      * @throws Exception
@@ -92,14 +100,14 @@ use Volta\Component\Registry\Exception as ContainerException;
     }
 
     /**
-     * Returns the value indexed by __$id__
+     * Returns the value identified by __$id__
      *
-     * @param string $id
+     * @param string $id Identifier of the entry to look for.
      * @param mixed|null $default
      * @return mixed
      * @throws NotFoundExceptionInterface|Exception|ContainerExceptionInterface
      */
-    public static function item(string $id, mixed $default=null): mixed
+    public static function entry(string $id, mixed $default=null): mixed
     {
         if(!static::getInstance()->has($id) && null!==$default) {
             return $default;
@@ -107,43 +115,46 @@ use Volta\Component\Registry\Exception as ContainerException;
         return static::getInstance()->get($id);
     }
 
-    /**
+    #endregion
+    #region - Modifying entries:
+
+     /**
      * @ignore Do not show in generated documentation
      * @var array<string, mixed>
      */
-    protected array $_items = [];
+    protected array $_entries = [];
 
-    /**
-     * Sets the value indexed by __$id__
-     *
-     * @param string $id
-     * @param mixed $entry
-     * @return ContainerInterface
-     * @throws ContainerExceptionInterface
-     */
-    public function set(string $id, mixed $entry): ContainerInterface
+     /**
+      * Sets the value to be identified by __$id__
+      *
+      * @param string $id Identifier of the entry to look for.
+      * @param mixed $entry
+      * @param bool $overwrite Whether to overwrite existing entries
+      * @return ContainerInterface
+      * @throws Exception On a duplicate entry when __$overwrite__ is set to false(default)
+      */
+    public function set(string $id, mixed $entry, bool $overwrite = false): ContainerInterface
     {
-        if ($this->has($id)) {
+        if ($this->has($id) && !$overwrite) {
             throw new ContainerException(sprintf('Duplicate entry: %s', $id));
         }
-        $this->_items[$id] = $entry;
+        $this->_entries[$id] = $entry;
         return $this;
     }
 
     /**
      * Unsets the value indexed by __$id__
      *
-     * @param string $id
+     * @param string $id Identifier of the entry to look for.
      * @return ContainerInterface
      */
     public function unset(string $id): ContainerInterface
     {
-        if ($this->has($id)) unset($this->_items[$id]);
+        if ($this->has($id)) unset($this->_entries[$id]);
         return $this;
     }
 
-    #endregion
-
+    #endregion --------------------------------------------------------------------------------------------------------:
     #region - ContainerInterface stubs:
 
     /**
@@ -154,10 +165,10 @@ use Volta\Component\Registry\Exception as ContainerException;
         if (!$this->has($id)) {
             throw new NotFoundException(sprintf('Entry %s not found', $id));
         }
-        if (is_callable($this->_items[$id])) {
-            return call_user_func($this->_items[$id]);
+        if (is_callable($this->_entries[$id])) {
+            return call_user_func($this->_entries[$id]);
         }
-        return $this->_items[$id];
+        return $this->_entries[$id];
     }
 
     /**
@@ -165,17 +176,16 @@ use Volta\Component\Registry\Exception as ContainerException;
      */
     public function has(string $id): bool
     {
-        return array_key_exists($id, $this->_items);
+        return array_key_exists($id, $this->_entries);
     }
 
-    #endregion
-
+    #endregion --------------------------------------------------------------------------------------------------------
     #region - ArrayAccess stubs:
 
-     /**
-      * @inheritdoc
-      * @see https://www.php.net/manual/en/arrayaccess.offsetexists.php
-      */
+    /**
+     * @inheritdoc
+     * @see https://www.php.net/manual/en/arrayaccess.offsetexists.php
+     */
     public function offsetExists(mixed $offset): bool
     {
         return $this->has((string) $offset);
@@ -184,26 +194,30 @@ use Volta\Component\Registry\Exception as ContainerException;
     /**
      * @inheritdoc
      * @see https://www.php.net/manual/en/arrayaccess.offsetGet.php
+     * @param mixed $offset
+     * @return mixed
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function offsetGet(mixed $offset): mixed
     {
         return $this->get((string) $offset);
     }
 
-     /**
-      * @inheritdoc
-      * @see https://www.php.net/manual/en/arrayaccess.offsetSet.php
-      * @throws ContainerExceptionInterface
-      */
+    /**
+     * @inheritdoc
+     * @see https://www.php.net/manual/en/arrayaccess.offsetSet.php
+     * @throws ContainerExceptionInterface
+     */
     public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->set((string) $offset, $value);
     }
 
-     /**
-      * @inheritdoc
-      * @see https://www.php.net/manual/en/arrayaccess.offsetUnset.php
-      */
+    /**
+     * @inheritdoc
+     * @see https://www.php.net/manual/en/arrayaccess.offsetUnset.php
+     */
     public function offsetUnset(mixed $offset): void
     {
         $this->unset((string) $offset);

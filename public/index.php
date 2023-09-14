@@ -9,12 +9,15 @@
  */
 declare(strict_types=1);
 
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+
 use Volta\Component\Registry\Container;
-use Volta\Component\Registry\Exception;
-use Volta\Component\Registry\NotFoundException;
 
 require_once __DIR__ . '/../vendor/autoload.php';
+
+ini_set('html_errors', false);
+header('Content-Type: text/plain');
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -25,11 +28,9 @@ try{
     echo $c->get('value 2');
     echo $c['value 1'];
 
-} catch (Exception $e) {
-    exit($e->getMessage());
-
-} catch (NotFoundExceptionInterface $e) {
-    exit($e->getMessage());
+} catch (ContainerExceptionInterface|NotFoundExceptionInterface $e) {
+    print_r($e);
+    exit(1);
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -37,15 +38,16 @@ try{
 /**
 * Exception on duplicate entry.
  *
-* To avoid accidentally overwriting an entry an exception is thrown when
+* To avoid accidentally overwriting an entry, an exception is thrown when
 * an entry already exists with the same id. If we need to overwrite an entry
 */
 try {
     $c['name 2'] = 'new value 2';
+    $c->set('name 2',  'new value 2');
 
-} catch (Exception $e) {
-
-    exit($e->getMessage());
+} catch (ContainerExceptionInterface $e) {
+    print_r($e);
+    exit(1);
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -54,9 +56,11 @@ try {
  * Exception thrown when entry is not found
  */
 try{
+    echo $c->get('name 3');
+    echo $c->entry('name 3');
     echo $c['name 3'];
 
-} catch (NotFoundException $e) {
-
-    exit($e->getMessage());
+} catch (NotFoundExceptionInterface|ContainerExceptionInterface $e) {
+    print_r($e);
+    exit(1);
 }

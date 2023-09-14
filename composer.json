@@ -1,6 +1,6 @@
 {
     "name" : "volta-framework/component-registry",
-    "type": "library",
+    "type": "libraries",
     "description": "A PSR Container Implementation",
     "keywords": ["psr", "Container", "php"],
     "homepage": "https://github.com/volta-framework/component-registry",
@@ -19,7 +19,7 @@
     },
 
     "autoload": {
-        "psr-4": { "Volta\\Component\\Registry\\": "src/Volta/Component/Registry/" }
+        "psr-4": { "Volta\\Component\\Registry\\": "libraries/Volta/Component/Registry/"}
     }
 
 
