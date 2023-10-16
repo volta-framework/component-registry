@@ -59,7 +59,7 @@ use Volta\Component\Registry\Exception as ContainerException;
      * @return void
      * @throws Exception
      */
-    public static function setInstance(Container|null $container): void
+    public static function setInstance(Container|null $container=null): void
     {
         if(null !== static::$_instance) {
             throw new ContainerException('Container Singleton already set, call Container::unsetInstance() first');
@@ -71,16 +71,21 @@ use Volta\Component\Registry\Exception as ContainerException;
         }
     }
 
-    /**
-     * Gets the singleton instance
-     *
-     * @return Container
-     * @throws Exception
-     */
-    public static function getInstance(): Container
+     /**
+      * Gets the singleton instance
+      *
+      * @param bool $create When TRUE a new singleton container is if not already done.
+      * @return Container
+      * @throws Exception
+      */
+    public static function getInstance(bool $create=false): Container
     {
         if(null === static::$_instance) {
-            throw new ContainerException('Container Singleton not set yet call Container::setInstance() first');
+            if ($create) {
+                Container::setInstance();
+            }else{
+                throw new ContainerException('Container Singleton not set yet call Container::setInstance() first');
+            }
         }
         return static::$_instance;
     }
@@ -97,6 +102,15 @@ use Volta\Component\Registry\Exception as ContainerException;
             throw new ContainerException('Container Singleton not set yet call Container::setInstance() first');
         }
         static::$_instance = null;
+    }
+
+     /**
+      * Whether a singleton instance is already set
+      * @return bool
+      */
+    public static function hasInstance(): bool
+    {
+        return null !== static::$_instance;
     }
 
     /**
